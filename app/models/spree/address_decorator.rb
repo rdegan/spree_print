@@ -1,4 +1,4 @@
-Address.class_eval do
+Spree::Address.class_eval do
 
   def stateid_or_statename
     return state.blank? ? state_name : state.name

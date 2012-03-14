@@ -1,4 +1,5 @@
-Rails.application.routes.draw do
+Spree::Core::Engine.routes.draw do
   # Add your extension routes here
-  match 'orders/print/:id', :to => 'orders#print_order', :via => :get, :as => :printing
+  match 'orders/print/:order_number', :to => 'orders#print_order', :via => :get, :as => :printing
 end
+
