@@ -1,0 +1,67 @@
+<html>
+<head>
+	<title><%= title %></title>
+	<%= stylesheet_link_tag 'store/print', :media => 'all' %>
+</head>
+<body>
+	<div id="wrapper-print">
+		<%= image_tag("store/logo.jpg", :class => "logo-print") %>
+		<%= link_to(image_tag("store/print.png") + raw("<br />Stampa"), "javascript:window.print()", :class => "print") %>
+	<h1>Resoconto Ordine - <%= @order.number %></h1>
+	<table>
+		<tr data-hook="cart_items_headers">
+	      <th><%= t(:item) %></th>
+	      <th><%= t(:qty) %> - <%= t(:price) %></th>
+	    </tr>
+		<% @order.line_items.each do |item| %>
+		<tr>
+			<td>
+				<%= item.variant.product.name.downcase.capitalize %><%= "(" + variant_options(item.variant) + ")" unless item.variant .option_values.empty? %>
+			</td>
+			<td style="text-align: right;">
+				<span style="margin-right: 80px"><%= item.quantity %> pz.</span> <%= number_to_currency (item.price * item.quantity) %>
+			</td>
+		</tr>
+		<% end %>
+		<tr>
+			<td colspan="2" style="padding-top: 30px;">
+				<%= t(:subtotal) %>: <span style="float: right;"><%= number_to_currency @order.item_total %></span>
+			</td>
+		</tr>
+		<tr>
+			<% @order.adjustments.eligible.each do |adjustment| %>
+			<% next if (adjustment.originator_type == "TaxRate") and (adjustment.amount == 0) %>
+			<td colspan="2"><%= t(:shipment_order_total) %>: <span style="float: right;"><%= number_to_currency adjustment.amount %></span></td>
+			<% end %>
+		</tr>
+	</table>
+	<h2>Dati di spedizione</h2>
+	<table>
+		<tr>
+			<td colspan="2">
+				<%= raw @order.shipping_method.name %>
+			</td>
+		</tr>
+	</table>
+	<h2>Dati di fatturazione e spedizione</h2>
+	<table>
+		<tr>
+			<td>
+				<%= raw @order.bill_address.to_print %>
+			</td>
+			<td>
+				<%= raw @order.ship_address.to_print %>
+			</td>
+		</tr>
+	</table>
+	<h2><%= t(:order_total) %></h2>
+	<table>
+		<tr>
+			<td colspan="2">
+				<span style="float: right; font-size: 22pt; font-weight: bold"><%= number_to_currency @order.total %></span>
+			</td>
+		</tr>
+	</table>
+	</div>
+</body>
+</html>
